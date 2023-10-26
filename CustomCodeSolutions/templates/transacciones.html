@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+
+{% block title %}Título de la página específica{% endblock %}
+
+{% block content %}
+<style>
+    /* styles.css */
+    .form-row {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .form-row label,
+    .form-row input {
+        flex: 1;
+    }
+
+    .contenedor {
+        display: flex;
+        margin-left: 20px;
+        align-items: center;
+        /* Centra verticalmente */
+        height: 45vh;
+        /* Opcional, ajusta la altura del contenedor según tus necesidades */
+    }
+
+    label {
+        width: 150px;
+        /* Define un ancho fijo para las etiquetas */
+        /* O puedes usar porcentajes para definir el ancho relativo:
+width: 30%;
+*/
+        display: inline-block;
+        /* Para que las etiquetas se muestren en línea y tengan el ancho especificado */
+    }
+</style>
+
+
+<div class="container">
+
+    <h1>Formulario</h1>
+
+    <div class="card">
+        <div class="card-header">
+            <div float-left>Informacion de Transacion</div>
+            <small class="text-danger">* Obligatorio</small>
+        </div>
+        <div class="card-body">
+
+            <form method="post" id="transaccion-form">
+                {% csrf_token %}
+                <div class="form-row">
+                    {{ form.num_transaccion.errors }}
+                    <div class="form-group col-md-2">
+                        <label for="{{ form.num_transaccion.id_for_label }}">Num. Transacción:</label>
+                        {{ form.num_transaccion }}
+                    </div>
+
+                    {{ form.descripcion.errors }}
+                    <div class="form-group col-md-5">
+                        <label for="{{ form.descripcion.id_for_label }}">Descripción:</label>
+                        {{ form.descripcion }}
+                    </div>
+
+                    {{ form.fecha.errors }}
+                    <div class="form-group col-md-5">
+                        <label for="{{ form.fecha.id_for_label }}">Fecha:</label>
+                        {{ form.fecha }}
+                    </div>
+                </div>
+
+
+                {% for cuenta_form in formct %}
+                <div class="form-row">
+                    {{ cuenta_form.cod_cuenta.errors }}
+                    <div class="form-group col-md-6">
+                        <label for="{{ cuenta_form.cod_cuenta.id_for_label }}">Cuenta:</label>
+                        {{ cuenta_form.cod_cuenta }}
+                    </div>
+                    <div class="form-group col-md-6">
+                        {% if forloop.counter == 1 %}
+                        <label for="{{ cuenta_form.debe.id_for_label }}">Debe:</label>
+                        {{ cuenta_form.debe }}
+                        {% else %}
+                        <label for="{{ cuenta_form.haber.id_for_label }}">Haber:</label>
+                        {{ cuenta_form.haber }}
+                        {% endif %}
+                    </div>
+
+                </div>
+                {% endfor %}
+
+
+        </div>
+        <div class="card-footer text-muted">
+            <div class="float-right">
+                <!--boton Guardar-->
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <!--Boton Regresar-->
+                <a class="btn btn-outline-dark" href="{% url 'inicio' %}" role="button">Regresar</a>
+            </div>
+            </form>
+
+
+
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <h2>Transacciones Guardadas</h2>
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Numero</th>
+                    <th>Descripción</th>
+                    <th>Total Debe</th>
+                    <th>Total Haber</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for transaccion in transacciones %}
+                <tr>
+                    <td>{{ transaccion.fecha }}</td>
+                    <td>{{ transaccion.num_transaccion }}</td>
+                    <td>{{ transaccion.descripcion }}</td>
+                    <td>{{ transaccion.total_debe_tran }}</td>
+                    <td>{{ transaccion.total_haber_tran }}</td>
+                    <td>
+                        <a href="/eliminarTransaccion/{{transaccion.num_transaccion}}"
+                            class="btn btn-danger btn-sm">Eliminar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+</div>
+
+
+{% endblock %}
